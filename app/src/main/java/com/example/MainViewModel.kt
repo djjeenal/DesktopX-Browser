@@ -261,8 +261,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         val formattedUrl = formatUrl(url)
         
         viewModelScope.launch(Dispatchers.Main) {
-            // Instantiate a new Android WebView for this tab so it persists in state
-            val webView = WebView(context).apply {
+            // Instantiate a new Android WebView for this tab wrapper so it persists safely in state
+            val wrapper = android.content.MutableContextWrapper(context)
+            val webView = WebView(wrapper).apply {
                 tag = id
             }
             configureWebView(webView, _isRealPcMode.value)
@@ -344,7 +345,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         val formattedUrl = formatUrl(url)
 
         viewModelScope.launch(Dispatchers.Main) {
-            val webView = WebView(context).apply {
+            val wrapper = android.content.MutableContextWrapper(context)
+            val webView = WebView(wrapper).apply {
                 tag = id
             }
             configureWebView(webView, _isRealPcMode.value)
@@ -783,6 +785,19 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             // Restore default
             webView.settings.userAgentString = null
             webView.setInitialScale(100)
+        }
+    }
+
+    fun updateContext(newContext: Context) {
+        _tabs.value.forEach { tab ->
+            tab.webViewInstance?.let { webView ->
+                (webView.context as? android.content.MutableContextWrapper)?.setBaseContext(newContext)
+            }
+        }
+        _windows.value.forEach { win ->
+            win.webViewInstance?.let { webView ->
+                (webView.context as? android.content.MutableContextWrapper)?.setBaseContext(newContext)
+            }
         }
     }
 

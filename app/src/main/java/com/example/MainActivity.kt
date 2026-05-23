@@ -96,6 +96,11 @@ fun DesktopXAppWrapper() {
         }
     }
 
+    // Sync current context with view model to handle configuration changes / activity recreation cleanly
+    LaunchedEffect(context) {
+        mainViewModel.updateContext(context)
+    }
+
     Box(modifier = Modifier.fillMaxSize()) {
         if (isAppLocked) {
             PasscodeLockScreen(
@@ -1055,6 +1060,7 @@ fun BrowserTabsScreen(viewModel: MainViewModel) {
                             .fillMaxSize()
                             .testTag("active_web_view"),
                         update = { webView ->
+                            (webView.context as? android.content.MutableContextWrapper)?.setBaseContext(context)
                             // Ensure standard client callbacks is connected properly
                             webView.webViewClient = object : WebViewClient() {
                                 override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
@@ -1480,6 +1486,7 @@ fun FloatingResizableWindowWidget(
     onMaximize: () -> Unit,
     onClose: () -> Unit
 ) {
+    val context = LocalContext.current
     val zValue = if (isFocused) 10f else 1f
     
     Card(
@@ -1559,7 +1566,10 @@ fun FloatingResizableWindowWidget(
                     factory = {
                         win.webViewInstance ?: WebView(it)
                     },
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
+                    update = { webView ->
+                        (webView.context as? android.content.MutableContextWrapper)?.setBaseContext(context)
+                    }
                 )
             }
 
