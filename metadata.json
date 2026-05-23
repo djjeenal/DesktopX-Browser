@@ -1,0 +1,6 @@
+{
+  "name": "DesktopX Browser",
+  "description": "A premium, production-ready desktop-class web browser and workspace environment for Android with advanced PC rendering, floating windows, custom virtual mouse/touchpad, developer tools, built-in file explorer, and AI Website Fixer.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
