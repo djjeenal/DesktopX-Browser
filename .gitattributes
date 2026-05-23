@@ -10,6 +10,7 @@ gradlew text eol=lf
 gradlew.bat text eol=crlf
 
 # Denote all files that are truly binary and should not be modified.
+gradle/wrapper/gradle-wrapper.jar binary
 *.png binary
 *.jpg binary
 *.jpeg binary
